@@ -8,6 +8,14 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
+    this.side = side;
+    if (side == BLACK) {
+		opp_side = WHITE;
+	}
+	else {
+		opp_side = BLACK;
+	}
+	board = new Board();
     //hi!
     // GitHub is a potato
     /* 
@@ -21,6 +29,7 @@ Player::Player(Side side) {
  * Destructor for the player.
  */
 Player::~Player() {
+	delete board;
 }
 
 /*
@@ -36,6 +45,11 @@ Player::~Player() {
  * return NULL.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
+	board.doMove(opponentsMove, opp_side);
+	if (board.hasMoves(side)) {
+		//get list of possible moves
+		//check which move produces best score
+		//return that move
     /* 
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
