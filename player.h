@@ -20,7 +20,7 @@ public:
     Side side;
     Side opp_side;
     //the board the player is playing on
-    Board board;
+    Board * board;
 };
 
 #endif

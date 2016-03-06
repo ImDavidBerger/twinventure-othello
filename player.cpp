@@ -8,7 +8,7 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    this.side = side;
+    this->side = side;
     if (side == BLACK) {
 		opp_side = WHITE;
 	}
@@ -44,15 +44,42 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return NULL.
  */
+ /**********************************************************************************
+  * STILL NEED TO ACCOUNT FOR TIME LEFT
+  * ********************************************************************************/
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-	board.doMove(opponentsMove, opp_side);
-	if (board.hasMoves(side)) {
+	//check if we have time
+	if (msLeft <= 0) 
+	{
+		return NULL;
+	}
+	//update board according to opponentsMove
+	board->doMove(opponentsMove, opp_side);
+	
+	//if board has possible moves
+	if (board->hasMoves(side)) 
+	{
 		//get list of possible moves
-		//check which move produces best score
-		//return that move
-    /* 
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */ 
+		vector<Move*> possMoves = board->getMoves(side);
+		
+		//iterate through vector to find best move
+		vector::iterator i;
+		Move * bestmove;
+		int maxpts = 0;
+		for (i = possMoves.begin(); i < possMoves.end(); i++) 
+		{	
+			//create copy of board, apply move, and check resulting score
+			Board * copy = board->copy();
+			copy->doMove(possMoves[i], side);
+			if (copy->count(side) > maxpts) 
+			{
+				maxpts = copy->count(side);
+				bestmove = possMoves[i];
+			}
+			delete copy;
+		}
+		return bestmove;
+	}
     return NULL;
 }
+};
