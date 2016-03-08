@@ -9,14 +9,33 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
+<<<<<<< HEAD
     this->board = new Board();
     this->side = side;
+=======
+    this->side = side;
+    if (side == BLACK) {
+		opp_side = WHITE;
+	}
+	else {
+		opp_side = BLACK;
+	}
+	board = new Board();
+    //hi!
+    // GitHub is a potato
+    /* 
+     * TODO: Do any initialization you need to do here (setting up the board,
+     * precalculating things, etc.) However, remember that you will only have
+     * 30 seconds.
+     */
+>>>>>>> 5df2651e1a5ce180d772b5483db5369a8acbcc61
 }
 
 /*
  * Destructor for the player.
  */
 Player::~Player() {
+	delete board;
 }
 
 /*
@@ -31,6 +50,9 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return NULL.
  */
+ /**********************************************************************************
+  * STILL NEED TO ACCOUNT FOR TIME LEFT
+  * ********************************************************************************/
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
     if(side == BLACK){
     	board->doMove(opponentsMove, WHITE);
@@ -64,3 +86,4 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
   	board->doMove(chosen, side);
     return chosen;
 }
+};
