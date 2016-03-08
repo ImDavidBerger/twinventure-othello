@@ -1,4 +1,5 @@
 #include "player.h"
+#include <iostream>
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -8,13 +9,8 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    //hi!
-    // GitHub is a potato
-    /* 
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
+    this->board = new Board();
+    this->side = side;
 }
 
 /*
@@ -36,9 +32,35 @@ Player::~Player() {
  * return NULL.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-    /* 
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */ 
-    return NULL;
+    if(side == BLACK){
+    	board->doMove(opponentsMove, WHITE);
+  	}else{
+  		board->doMove(opponentsMove, BLACK);
+  	}
+  	
+  	Move *chosen, *bestStart, *currentStart;
+  	int chosenScore = -168, tempScore;
+  	Board *temp;
+  	
+  	if(!board->hasMoves(side)){
+  		return NULL;
+  	}
+  	
+  	for(int r = 0; r < 8; r++){
+  		for(int c = 0; c < 8; c++){
+  			if(board->checkMove(new Move(r, c), side)){
+  				temp = board->copy();
+  				temp->doMove(new Move(r, c), side);
+  				tempScore = temp->getScore(side);
+  				if(tempScore > chosenScore){
+  					chosen = new Move(r, c);
+  					chosenScore = tempScore;
+  				}
+  			}
+  		}
+  	}
+  	
+  	// std::cerr << chosenScore << std::endl;
+  	board->doMove(chosen, side);
+    return chosen;
 }

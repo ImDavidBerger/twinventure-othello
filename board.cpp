@@ -162,6 +162,77 @@ int Board::countWhite() {
     return taken.count() - black.count();
 }
 
+Side Board::getColor(int x, int y){
+	if(taken[x + 8*y] == 0){
+		return BLANK;
+	}
+	if(black[x + 8*y] == 0){
+		return WHITE;
+	}
+	return BLACK;
+}
+
+int Board::getScore(Side side){
+	int edge = 3, corner = 8;
+	int score = 0;
+	if(getColor(0, 0) == side){
+		score += corner;
+	}else if(getColor(0, 0) != BLANK){
+		score -= corner;
+	}
+	
+	if(getColor(0, 7) == side){
+		score += corner;
+	}else if(getColor(0, 7) != BLANK){
+		score -= corner;
+	}
+	
+	if(getColor(7, 0) == side){
+		score += corner;
+	}else if(getColor(7, 0) != BLANK){
+		score -= corner;
+	}
+	
+	if(getColor(7, 7) == side){
+		score += corner;
+	}else if(getColor(7, 7) != BLANK){
+		score -= corner;
+	}
+	
+	for(int i = 1; i < 7; i++){
+		if(getColor(i, 0) == side){
+			score += edge;
+		}else if(getColor(i, 0) != BLANK){
+			score -= edge;
+		}
+	
+		if(getColor(i, 7) == side){
+			score += edge;
+		}else if(getColor(i, 7) != BLANK){
+			score -= edge;
+		}
+	
+		if(getColor(0, i) == side){
+			score += edge;
+		}else if(getColor(0, i) != BLANK){
+			score -= edge;
+		}
+	
+		if(getColor(7, i) == side){
+			score += edge;
+		}else if(getColor(7, i) != BLANK){
+			score -= edge;
+		}
+	}
+	
+	if(side == BLACK){
+		score += countBlack() - countWhite();
+	}else{
+		score += countWhite() - countBlack();
+	}
+	return score;
+}
+
 /*
  * Sets the board state given an 8x8 char array where 'w' indicates a white
  * piece and 'b' indicates a black piece. Mainly for testing purposes.

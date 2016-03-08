@@ -7,7 +7,9 @@
 using namespace std;
 
 class Player {
-
+private:
+	Board * board;
+	Side side;
 public:
     Player(Side side);
     ~Player();

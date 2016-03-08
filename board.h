@@ -15,6 +15,7 @@ private:
     bool get(Side side, int x, int y);
     void set(Side side, int x, int y);
     bool onBoard(int x, int y);
+    Side getColor(int x, int y);
       
 public:
     Board();
@@ -28,6 +29,7 @@ public:
     int count(Side side);
     int countBlack();
     int countWhite();
+    int getScore(Side side);
 
     void setBoard(char data[]);
 };
