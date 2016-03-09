@@ -25,13 +25,12 @@ public:
     bool isDone();
     bool hasMoves(Side side);
     bool checkMove(Move *m, Side side);
-    vector<Move*> Board::getMoves(Side side) {
     void doMove(Move *m, Side side);
     int count(Side side);
     int countBlack();
     int countWhite();
     int getScore(Side side);
-
+	
     void setBoard(char data[]);
 };
 

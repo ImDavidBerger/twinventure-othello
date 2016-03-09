@@ -7,28 +7,9 @@
  * within 30 seconds.
  */
 Player::Player(Side side) {
-    // Will be set to true in test_minimax.cpp.
-    testingMinimax = false;
-<<<<<<< HEAD
     this->board = new Board();
     this->side = side;
-=======
-    this->side = side;
-    if (side == BLACK) {
-		opp_side = WHITE;
-	}
-	else {
-		opp_side = BLACK;
-	}
-	board = new Board();
-    //hi!
-    // GitHub is a potato
-    /* 
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
->>>>>>> 5df2651e1a5ce180d772b5483db5369a8acbcc61
+    this->testingMinimax = false;
 }
 
 /*
@@ -60,7 +41,12 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
   		board->doMove(opponentsMove, BLACK);
   	}
   	
-  	Move *chosen, *bestStart, *currentStart;
+  	Move *chosen = NULL;
+  	if(testingMinimax){
+  		Next temp = minimax(2);
+  		return temp.move;
+  	}
+  	
   	int chosenScore = -168, tempScore;
   	Board *temp;
   	
@@ -86,4 +72,145 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
   	board->doMove(chosen, side);
     return chosen;
 }
-};
+
+void Player::updateBoard(char data[]){
+	board->setBoard(data);
+}
+
+Next Player::minimax(int depth) {
+	if(side == BLACK){
+		return bestBlack(board, depth+1);
+	}else{
+		return bestWhite(board, depth+1);
+	}
+}
+
+
+
+
+
+Next Player::bestBlack(Board * b, int depth){
+	std::cerr << "Checking Black" << std::endl;
+	if (depth == 0 || !b->hasMoves(BLACK)) {
+		Next toReturn;
+		toReturn.score = b->getScore(BLACK);
+		toReturn.move = NULL;
+		return toReturn;
+	}
+	
+	Move* bestMove = NULL;
+	int bestScore = -164;
+	
+	for (int r = 0; r < 8; r++) {
+		for (int c = 0; c < 8; c++) {
+			Move *m = new Move(r, c);
+			//if it's a possible move
+			if(board->checkMove(m, BLACK)){
+				Board *temp = b->copy();
+				temp->doMove(m, BLACK);
+				
+				Next tempNext = bestWhite(temp, depth-1);
+				
+				if (tempNext.score > bestScore) {
+					bestScore = tempNext.score;
+					bestMove = new Move(r, c);
+				}
+			}
+		}
+	}
+	Next n;
+	n.score = bestScore;
+	n.move = bestMove;
+	return n;
+}
+
+
+
+
+
+
+Next Player::bestWhite(Board * b, int depth){
+	std::cerr << "Checking White" << std::endl;
+	if (depth == 0 || !b->hasMoves(WHITE)) {
+		Next toReturn;
+		toReturn.score = b->getScore(WHITE);
+		toReturn.move = NULL;
+		return toReturn;
+	}
+	
+	Move* bestMove = NULL;
+	int bestScore = -164;
+	
+	for (int r = 0; r < 8; r++) {
+		for (int c = 0; c < 8; c++) {
+			Move *m = new Move(r, c);
+			//if it's a possible move
+			if(board->checkMove(m, WHITE)){
+				Board *temp = b->copy();
+				temp->doMove(m, WHITE);
+				
+				Next tempNext = bestBlack(temp, depth-1);
+				
+				if (tempNext.score > bestScore) {
+					bestScore = tempNext.score;
+					bestMove = new Move(r, c);
+				}
+			}
+		}
+	}
+	Next n;
+	n.score = bestScore;
+	n.move = bestMove;
+	return n;
+}
+
+/**
+
+	
+	//gets opponent's side
+	Side opp;
+	if (bside == WHITE) {
+		opp = BLACK;
+	}
+	else {
+		opp = WHITE;
+	}
+	
+	//sets initial best score
+	int bestScore;
+	if (this->side == bside) {
+		bestScore = -164;
+	}
+	else {
+		bestScore = 164;
+	}
+	//check every possible move
+	for (int r = 0; r < 8; r++) {
+		for (int c = 0; c < 8; c++) {
+			Move *m = new Move(r, c);
+			//if it's a possible move
+			if(board->checkMove(m, bside)){
+				//create copy of board and do that move
+				Board * temp = board->copy();
+				temp->doMove(m, bside);
+				
+				//run minimax
+				int score = minimax(temp, bside, depth-1, bestMove);
+				//check if we want min score or max score
+				if (this->side == bside) {
+					if (score > bestScore) {
+						bestScore = score;
+						bestMove = new Move(r, c);
+					}
+				}
+				else if (score < bestScore) {
+					bestScore = score;
+					bestMove = new Move(r, c);
+				}
+			}
+		}
+	}
+	//bestMove now points to best move`
+	return bestScore;
+	
+	*/

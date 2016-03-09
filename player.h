@@ -8,7 +8,6 @@ using namespace std;
 
 class Player {
 private:
-	Board * board;
 	Side side;
 public:
     Player(Side side);
@@ -18,11 +17,11 @@ public:
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
-    //Side of player
-    Side side;
-    Side opp_side;
-    //the board the player is playing on
-    Board * board;
+	Board * board;
+	Next minimax(int depth);
+	Next bestBlack(Board * b, int depth);
+	Next bestWhite(Board * b, int depth);
+	void updateBoard(char data[]);
 };
 
 #endif

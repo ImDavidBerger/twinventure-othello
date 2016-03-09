@@ -45,6 +45,7 @@ bool Board::onBoard(int x, int y) {
     return(0 <= x && x < 8 && 0 <= y && y < 8);
 }
 
+/*
 vector<Move*> Board::getMoves(Side side) {
 	std::vector<Move*> possMoves = new std::vector<Move*>();
 	for (int i = 0; i < 8; i++) {
@@ -57,6 +58,7 @@ vector<Move*> Board::getMoves(Side side) {
 	}
 	return possMoves;
 }
+*/
 /*
  * Returns true if the game is finished; false otherwise. The game is finished 
  * if neither side has a legal move.
