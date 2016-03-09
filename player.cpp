@@ -90,7 +90,6 @@ Next Player::minimax(int depth) {
 
 
 Next Player::bestBlack(Board * b, int depth){
-	std::cerr << "Checking Black" << std::endl;
 	if (depth == 0 || !b->hasMoves(BLACK)) {
 		Next toReturn;
 		toReturn.score = b->getScore(BLACK);
@@ -130,7 +129,6 @@ Next Player::bestBlack(Board * b, int depth){
 
 
 Next Player::bestWhite(Board * b, int depth){
-	std::cerr << "Checking White" << std::endl;
 	if (depth == 0 || !b->hasMoves(WHITE)) {
 		Next toReturn;
 		toReturn.score = b->getScore(WHITE);
