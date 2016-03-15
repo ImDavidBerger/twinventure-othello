@@ -8,7 +8,9 @@ using namespace std;
 
 class Player {
 private:
-	Side side;
+	Board *board;
+	bool side;
+	short move;
 public:
     Player(Side side);
     ~Player();
@@ -16,12 +18,6 @@ public:
     Move *doMove(Move *opponentsMove, int msLeft);
 
     // Flag to tell if the player is running within the test_minimax context
-    bool testingMinimax;
-	Board * board;
-	Next minimax(int depth);
-	Next bestBlack(Board * b, int depth);
-	Next bestWhite(Board * b, int depth);
-	void updateBoard(char data[]);
 };
 
 #endif

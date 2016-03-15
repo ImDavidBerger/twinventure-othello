@@ -1,37 +1,70 @@
-#ifndef __BOARD_H__
-#define __BOARD_H__
+#ifndef __board_h__
+#define __board_h__
 
+
+#include "shared.h"
 #include <bitset>
-#include "common.h"
+#include <iostream>
+#include <vector>
+
 using namespace std;
 
 class Board {
    
 private:
-    bitset<64> black;
-    bitset<64> taken;    
-       
-    bool occupied(int x, int y);
-    bool get(Side side, int x, int y);
-    void set(Side side, int x, int y);
+    bitset<16> board[8];
+    short score;
+    bool turn;
+    Posn genMove;
+    vector<Board*> next;
+    
     bool onBoard(int x, int y);
-    Side getColor(int x, int y);
+    void createChild(Posn m);
+    
+    void updateColorsBlack(Posn m);
+    void updateColorsWhite(Posn m);
+    
+    bool isValidBlackMove(Posn m);
+    bool isValidWhiteMove(Posn m);
+    
+    short endOfBlackTunnel(int depth);
+    short endOfWhiteTunnel(int depth);
       
 public:
     Board();
+    void StartBoard();
     ~Board();
     Board *copy();
-        
+    
+    bitset<2> getSquare(short x, short y);
+    void setSquare(short x, short y);
+    void overWrite(bitset<16> b[]);
+    
+    Posn getCreator();
+    void tellCreator(Posn m);
+    
+    short getScore();
+    void updateScore();
+    
+    void flipSquare(short x, short y);
+    void updateColors(Posn m);
+    
+    void nextTurn();
+    void clearNext();
+    
+    
+    bool isValidMove(Posn m);
+    vector<Posn> getValidMoves();
+    
+    
+    vector<Board*> getNext();
+    void nextGen();
+    void createGens(int depth);
+    Posn getBestMove(int depth);
+    int findChild(Posn m);
+    
     bool isDone();
-    bool hasMoves(Side side);
-    bool checkMove(Move *m, Side side);
-    void doMove(Move *m, Side side);
-    int count(Side side);
-    int countBlack();
-    int countWhite();
-    int getScore(Side side);
-	
-    void setBoard(char data[]);
+    void printBoard();
 };
 
 #endif

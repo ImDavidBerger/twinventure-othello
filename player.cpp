@@ -1,4 +1,6 @@
 #include "player.h"
+
+#include <unistd.h>
 #include <iostream>
 
 /*
@@ -8,8 +10,13 @@
  */
 Player::Player(Side side) {
     this->board = new Board();
-    this->side = side;
-    this->testingMinimax = false;
+    if(side == BLACK){
+    	this->side = true;
+    }else{
+    	this->side = false;
+    }
+    this->move = 0;
+    this->board->StartBoard();
 }
 
 /*
@@ -30,185 +37,75 @@ Player::~Player() {
  *
  * The move returned must be legal; if there are no valid moves for your side,
  * return NULL.
+ Move: 4, 7Score: 60
++----------------+
+|  X X X         |
+|X X X           |
+|  O X X         |
+|X O X X X       |
+|X O X X X       |
+|X O X     X     |
+|X   O           |
+|X   X X X       |
++----------------+
+Opponents move: 4, 1
+Picked 3 move.
+
+
+Move: 4, 1Score: 47
++----------------+
+|  X X O         |
+|X X X   O       |
+|  O X O         |
+|X O O X X       |
+|X O X X X       |
+|X O X     X     |
+|X   O           |
+|X   X X X       |
++----------------+
+
  */
  /**********************************************************************************
   * STILL NEED TO ACCOUNT FOR TIME LEFT
   * ********************************************************************************/
-Move *Player::doMove(Move *opponentsMove, int msLeft) {
-    if(side == BLACK){
-    	board->doMove(opponentsMove, WHITE);
-  	}else{
-  		board->doMove(opponentsMove, BLACK);
-  	}
-  	
-  	Move *chosen = NULL;
-  	if(testingMinimax){
-  		Next temp = minimax(2);
-  		return temp.move;
-  	}
-  	
-  	int chosenScore = -168, tempScore;
-  	Board *temp;
-  	
-  	if(!board->hasMoves(side)){
-  		return NULL;
-  	}
-  	
-  	for(int r = 0; r < 8; r++){
-  		for(int c = 0; c < 8; c++){
-  			if(board->checkMove(new Move(r, c), side)){
-  				temp = board->copy();
-  				temp->doMove(new Move(r, c), side);
-  				tempScore = temp->getScore(side);
-  				if(tempScore > chosenScore){
-  					chosen = new Move(r, c);
-  					chosenScore = tempScore;
-  				}
-  			}
-  		}
-  	}
-  	
-  	// std::cerr << chosenScore << std::endl;
-  	board->doMove(chosen, side);
-    return chosen;
-}
-
-void Player::updateBoard(char data[]){
-	board->setBoard(data);
-}
-
-Next Player::minimax(int depth) {
-	if(side == BLACK){
-		return bestBlack(board, depth+1);
+Move* Player::doMove(Move *opponentsMove, int msLeft) {
+	if(opponentsMove != NULL){
+		Posn m;
+		if(!side && move == 0) board->nextGen();
+		m.x = opponentsMove->getX();
+		m.y = opponentsMove->getY();
+		int index = board->findChild(m);
+		board = board->getNext()[index];
 	}else{
-		return bestWhite(board, depth+1);
-	}
-}
-
-
-
-
-
-Next Player::bestBlack(Board * b, int depth){
-	if (depth == 0 || !b->hasMoves(BLACK)) {
-		Next toReturn;
-		toReturn.score = b->getScore(BLACK);
-		toReturn.move = NULL;
-		return toReturn;
-	}
-	
-	Move* bestMove = NULL;
-	int bestScore = -164;
-	
-	for (int r = 0; r < 8; r++) {
-		for (int c = 0; c < 8; c++) {
-			Move *m = new Move(r, c);
-			//if it's a possible move
-			if(board->checkMove(m, BLACK)){
-				Board *temp = b->copy();
-				temp->doMove(m, BLACK);
-				
-				Next tempNext = bestWhite(temp, depth-1);
-				
-				if (tempNext.score > bestScore) {
-					bestScore = tempNext.score;
-					bestMove = new Move(r, c);
-				}
-			}
+		if(move != 0){
+			board->nextTurn();
+			board->clearNext();
+			board->createGens(2);
 		}
 	}
-	Next n;
-	n.score = bestScore;
-	n.move = bestMove;
-	return n;
+	board->printBoard();
+	
+	sleep(0);
+    Move *chosenMove = NULL;
+    
+    if(board->getValidMoves().size() == 0){
+    	sleep(3);
+    	return NULL;
+    }
+    if(move == 0){
+    	board->createGens(4);
+    }else{
+    	board->createGens(2);
+    }
+    Posn m = board->getBestMove(-1);
+    
+    chosenMove = new Move(m.x, m.y);
+	int chosen = board->findChild(m);
+    board = board->getNext()[chosen];
+    //cerr << "Trying move to " << m.x << ", " << m.y << "." << endl;
+    //board->printBoard();
+	board->printBoard();
+    
+    move++;
+    return chosenMove;
 }
-
-
-
-
-
-
-Next Player::bestWhite(Board * b, int depth){
-	if (depth == 0 || !b->hasMoves(WHITE)) {
-		Next toReturn;
-		toReturn.score = b->getScore(WHITE);
-		toReturn.move = NULL;
-		return toReturn;
-	}
-	
-	Move* bestMove = NULL;
-	int bestScore = -164;
-	
-	for (int r = 0; r < 8; r++) {
-		for (int c = 0; c < 8; c++) {
-			Move *m = new Move(r, c);
-			//if it's a possible move
-			if(board->checkMove(m, WHITE)){
-				Board *temp = b->copy();
-				temp->doMove(m, WHITE);
-				
-				Next tempNext = bestBlack(temp, depth-1);
-				
-				if (tempNext.score > bestScore) {
-					bestScore = tempNext.score;
-					bestMove = new Move(r, c);
-				}
-			}
-		}
-	}
-	Next n;
-	n.score = bestScore;
-	n.move = bestMove;
-	return n;
-}
-
-/**
-
-	
-	//gets opponent's side
-	Side opp;
-	if (bside == WHITE) {
-		opp = BLACK;
-	}
-	else {
-		opp = WHITE;
-	}
-	
-	//sets initial best score
-	int bestScore;
-	if (this->side == bside) {
-		bestScore = -164;
-	}
-	else {
-		bestScore = 164;
-	}
-	//check every possible move
-	for (int r = 0; r < 8; r++) {
-		for (int c = 0; c < 8; c++) {
-			Move *m = new Move(r, c);
-			//if it's a possible move
-			if(board->checkMove(m, bside)){
-				//create copy of board and do that move
-				Board * temp = board->copy();
-				temp->doMove(m, bside);
-				
-				//run minimax
-				int score = minimax(temp, bside, depth-1, bestMove);
-				//check if we want min score or max score
-				if (this->side == bside) {
-					if (score > bestScore) {
-						bestScore = score;
-						bestMove = new Move(r, c);
-					}
-				}
-				else if (score < bestScore) {
-					bestScore = score;
-					bestMove = new Move(r, c);
-				}
-			}
-		}
-	}
-	//bestMove now points to best move`
-	return bestScore;
-	
-	*/
